@@ -24,14 +24,10 @@ namespace PokerAPI.Services.Evaluation{
             if(hand.Cards == null){
                 throw new InvalidOperationException("Invalid cards on Hand");
             }
-            
             List<int> suits = new List<int>(Enumerable.Repeat(0, NUM_SUITS_IN_DECK));
             List<int> cards = new List<int>(Enumerable.Repeat(0, NUM_VALUES_IN_DECK));
             
-            foreach(var card in hand.Cards){
-                suits[card.Suit] ++;
-                cards[card.CardIndex % NUM_VALUES_IN_DECK] ++;
-            }
+            CountSuitsAndCards(hand, suits, cards);
 
             rankValue = GetRankValue(cards);
             firstCardIndex = cards.FindIndex(index => index == 1);
@@ -54,7 +50,7 @@ namespace PokerAPI.Services.Evaluation{
                 PlayerNumber = hand.HandNumber,
                 RankValue = rankValue,
                 Ranks = handRanks,
-                RankDescription = rankDescription
+                RankDescription = rankDescription,
             };
   
         }
@@ -97,6 +93,7 @@ namespace PokerAPI.Services.Evaluation{
                 { "pair", cards.Count(count => count == 2) == 1 },
                 { "high_card", true }
             };
+
             ranks["straight_flush"] = ranks["flush"] && ranks["straight"];
             ranks["royal_flush"] = ranks["straight_flush"] && firstCardIndex == TEN_CARD_POSITION;
             return ranks;
@@ -119,6 +116,22 @@ namespace PokerAPI.Services.Evaluation{
             return OverallResult;
         }
 
+        /// <summary>
+        /// Counts the occurrences of suits and cards in a poker hand and updates the corresponding lists.
+        /// </summary>
+        /// <param name="hand">The poker hand to process.</param>
+        /// <param name="suits">A list representing the count of suits.</param>
+        /// <param name="cards">A list representing the count of cards.</param>
+        /// <exception cref="InvalidOperationException">Thrown when the hand's cards are null.</exception>
+        private void CountSuitsAndCards(PokerHand hand, List<int> suits, List<int> cards){
+            if(hand.Cards == null){
+                throw new InvalidOperationException("Invalid cards on Hand");
+            }
+            foreach(var card in hand.Cards){
+                suits[card.Suit] ++;
+                cards[card.CardIndex % NUM_VALUES_IN_DECK] ++;
+            }
+        }
 
         /// <summary>
         /// Formats a rank description string by capitalizing the first letter of each word.
