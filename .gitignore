@@ -1,0 +1,14 @@
+.vscode/
+ipch/
+[Oo]bj/
+[Bb]in/
+
+*.dll
+*.exe
+*.log
+*.pdb
+*.zip
+
+# NuGet packages
+*.nuget.props
+*.nuget.targets
